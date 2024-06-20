@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import questionData from "./src/data/questionList.json" with { type: "json"};
+// import questionData from "./src/data/questionList.json" with { type: "json"};
 import submissionSchema from "./src/lib/types/validation";
 
 const app = express();
@@ -8,7 +8,6 @@ const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
-
 
 const validate = (schema) => async (req, res, next) => {
   try {
@@ -18,13 +17,13 @@ const validate = (schema) => async (req, res, next) => {
     console.log(error);
     res.status(400).json({ message: error.errors });
   }
-}
+};
 
 // If we want to simulate retrieving questions from the server...
-app.get("/questions", (req, res) => {
-  console.log("Retrieving Questions from mock server...");
-  res.json(questionData);
-});
+// app.get("/questions", (req, res) => {
+//   console.log("Retrieving Questions from mock server...");
+//   res.json(questionData);
+// });
 
 // If we want to simulate receiving a submission...
 app.post("/submit", validate(submissionSchema), (req, res) => {
