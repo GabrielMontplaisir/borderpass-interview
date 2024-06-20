@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import questionData from "./data/questionList.json";
 import QuestionType from "./lib/types/question";
 import Question from "./components/Question";
+import axios from "axios";
 
 export default function App() {
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -18,11 +19,27 @@ export default function App() {
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Mock API retrieval of questions from server
   useEffect(() => {
+    // Mock API retrieval of questions from server
+    // getQuestions();
+
+    // Alternatively, get the questions from local JSON file.
     setQuestions(questionData);
     setIsLoading(false);
   }, []);
+
+  const getQuestions = async () => {
+    await axios
+      .get("http://localhost:3001/questions")
+      .then((response) => {
+        setQuestions(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching questions: ", error);
+      });
+
+    setIsLoading(false);
+  };
 
   // Handle button clicks
   const handleBack = () => {
@@ -35,9 +52,16 @@ export default function App() {
     setQuestionIndex(questionIndex + 1);
   };
 
-  // Handle Form Submission
-  const handleSubmit = () => {
-    console.log("Submitting form data", answers);
+  // Handle Form Submission to Express Server using Axios
+  const handleSubmit = async () => {
+    await axios
+      .post("http://localhost:3001/submit", answers)
+      .then((response) => {
+        console.log("Submission response: ", response.data);
+      })
+      .catch((error) => {
+        console.log("Error submitting form: ", error);
+      });
   };
 
   // Set answer for each question
