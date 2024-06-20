@@ -2,6 +2,7 @@
   {
     "id": 1,
     "type": "text",
+    "name": "name",
     "question": "What is your name?",
     "mandatory": true,
     "hint": "Enter your full name"
@@ -9,6 +10,7 @@
   {
     "id": 2,
     "type": "email",
+    "name": "email",
     "question": "What is your email address?",
     "mandatory": true,
     "hint": "Enter your email address"
@@ -16,6 +18,7 @@
   {
     "id": 3,
     "type": "country",
+    "name": "residence",
     "question": "Which country do you currently live in?",
     "mandatory": true,
     "hint": "Select a country from the list"
@@ -23,6 +26,7 @@
   {
     "id": 4,
     "type": "country",
+    "name": "nationality",
     "question": "What is your nationality?",
     "mandatory": true,
     "hint": "Select a country from the list"
@@ -30,6 +34,7 @@
   {
     "id": 5,
     "type": "checkbox",
+    "name": "workIndustry",
     "question": "Which industry do you work in?",
     "mandatory": false,
     "options": [
@@ -44,13 +49,15 @@
   {
     "id": 6,
     "type": "radio",
+    "name": "permitType",
     "question": "What kind of permit are you applying for?",
     "mandatory": true,
-    "options": ["Study", "Work", "Express Entry"]
+    "options": ["Study", "Work", "Express", "Visitor", "Other"]
   },
   {
     "id": 7,
     "type": "radio",
+    "name": "reference",
     "question": "How did you hear about us?",
     "mandatory": false,
     "options": ["Google", "Facebook", "Twitter", "LinkedIn", "Other"]

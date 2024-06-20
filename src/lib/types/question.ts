@@ -1,5 +1,6 @@
 export default interface QuestionType {
   id: number;
+  name: string;
   type:
     | "text"
     | "email"

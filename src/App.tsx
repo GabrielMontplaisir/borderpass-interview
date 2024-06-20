@@ -1,9 +1,11 @@
 import {
+  Alert,
   Box,
   Button,
   CircularProgress,
   Container,
   FormControl,
+  Snackbar,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import questionData from "./data/questionList.json";
@@ -18,6 +20,9 @@ export default function App() {
   );
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [validationError, setValidationError] = useState<string>("");
 
   useEffect(() => {
     // Mock API retrieval of questions from server
@@ -28,28 +33,50 @@ export default function App() {
     setIsLoading(false);
   }, []);
 
-  const getQuestions = async () => {
-    await axios
-      .get("http://localhost:3001/questions")
-      .then((response) => {
-        setQuestions(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching questions: ", error);
-      });
+  // If retrieving questions from the server
+  // const getQuestions = async () => {
+  //   await axios
+  //     .get("http://localhost:3001/questions")
+  //     .then((response) => {
+  //       setQuestions(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching questions: ", error);
+  //     });
 
-    setIsLoading(false);
+  //   setIsLoading(false);
+  // };
+
+  // Validate answers
+  const validateQuestion = (index: number, value?: string | string[]) => {
+    const question = questions[index];
+    const answer = value || answers[question.id] || "";
+
+    if (question.mandatory && !answer) {
+      setValidationError("This field is required");
+      return false;
+    } else if (
+      question.type === "email" &&
+      !/\S+@\S+\.\S+/.test(answer as string)
+    ) {
+      setValidationError("Invalid email address");
+      return false;
+    }
+
+    if (validationError) setValidationError("");
+    return true;
   };
 
   // Handle button clicks
   const handleBack = () => {
     if (questionIndex > 0) {
       setQuestionIndex(questionIndex - 1);
+      validateQuestion(questionIndex - 1);
     }
   };
 
   const handleNext = () => {
-    setQuestionIndex(questionIndex + 1);
+    if (validateQuestion(questionIndex)) setQuestionIndex(questionIndex + 1);
   };
 
   // Handle Form Submission to Express Server using Axios
@@ -58,9 +85,11 @@ export default function App() {
       .post("http://localhost:3001/submit", answers)
       .then((response) => {
         console.log("Submission response: ", response.data);
+        setOpenSnackbar(true);
       })
       .catch((error) => {
         console.log("Error submitting form: ", error);
+        setErrorMessage("Error submitting form. Please try again.");
       });
   };
 
@@ -70,7 +99,7 @@ export default function App() {
   };
 
   if (isLoading) {
-    return <CircularProgress />;
+    return <CircularProgress size={60} sx={{ color: "white" }} />;
   }
 
   return (
@@ -88,12 +117,17 @@ export default function App() {
               question={questions[questionIndex]}
               onAnswerChange={handleAnswerChange}
               answer={answers[questions[questionIndex].id]}
+              validateQuestion={validateQuestion}
+              validationError={validationError}
             />
           )}
           <Box sx={{ ml: "auto" }}>
             {questionIndex !== 0 && <Button onClick={handleBack}>Back</Button>}
             {questionIndex !== questions.length - 1 ? (
-              <Button variant="contained" onClick={handleNext}>
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                disabled={!!validationError}>
                 Next
               </Button>
             ) : (
@@ -103,6 +137,20 @@ export default function App() {
             )}
           </Box>
         </FormControl>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={5000}
+          onClose={() => setOpenSnackbar(false)}>
+          <Alert severity="success" onClose={() => setOpenSnackbar(false)}>
+            Form submitted successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={!!errorMessage}
+          autoHideDuration={5000}
+          onClose={() => setErrorMessage("")}>
+          <Alert severity="error">{errorMessage}</Alert>
+        </Snackbar>
       </Container>
     </>
   );

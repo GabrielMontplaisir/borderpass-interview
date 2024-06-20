@@ -3,6 +3,7 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  FormHelperText,
   MenuItem,
   Radio,
   RadioGroup,
@@ -15,14 +16,18 @@ import { useState } from "react";
 
 interface QuestionProps {
   question: QuestionType;
-  onAnswerChange: (id: number, answer: string | string[]) => void;
   answer: string | string[];
+  onAnswerChange: (id: number, answer: string | string[]) => void;
+  validateQuestion: (index: number, value?: string) => boolean;
+  validationError: string;
 }
 
 export const Question = ({
   question,
-  onAnswerChange,
   answer,
+  onAnswerChange,
+  validateQuestion,
+  validationError,
 }: QuestionProps) => {
   const [checkedList, setCheckedList] = useState<string[]>(
     (answer as string[]) || []
@@ -40,6 +45,7 @@ export const Question = ({
 
   // Handle text input changes
   const handleChange = (e: any) => {
+    validateQuestion(question.id - 1, e.target.value);
     onAnswerChange(question.id, e.target.value);
   };
 
@@ -53,8 +59,11 @@ export const Question = ({
         <TextField
           fullWidth
           label={question.hint}
+          name={question.name}
           type={question.type}
           onChange={handleChange}
+          error={!!validationError}
+          helperText={validationError}
           value={answer ? answer : ""}
         />
       )}
@@ -63,7 +72,9 @@ export const Question = ({
           <Select
             displayEmpty
             onChange={handleChange}
+            name={question.name}
             value={answer ? answer : ""}
+            error={!!validationError}
             fullWidth>
             <MenuItem disabled value="">
               <em>{question.hint}</em>
@@ -74,6 +85,9 @@ export const Question = ({
               </MenuItem>
             ))}
           </Select>
+          <FormHelperText error={!!validationError}>
+            {validationError}
+          </FormHelperText>
         </>
       )}
       {question.type === "checkbox" && (
@@ -84,9 +98,9 @@ export const Question = ({
                 key={option}
                 control={
                   <Checkbox
-                    name={option}
+                    name={option.toLowerCase()}
                     onChange={handleChecklist}
-                    checked={checkedList.includes(option)}
+                    checked={checkedList.includes(option.toLowerCase())}
                   />
                 }
                 label={option}
@@ -96,19 +110,22 @@ export const Question = ({
       )}
       {question.type === "radio" && (
         <>
-          <RadioGroup>
+          <RadioGroup name={question.name}>
             {question.options &&
               question.options.map((option) => (
                 <FormControlLabel
                   key={option}
-                  value={option}
-                  checked={answer === option}
+                  value={option.toLowerCase()}
+                  checked={answer === option.toLowerCase()}
                   onChange={handleChange}
                   control={<Radio />}
                   label={option}
                 />
               ))}
           </RadioGroup>
+          <FormHelperText error={!!validationError}>
+            {validationError}
+          </FormHelperText>
         </>
       )}
     </Box>
