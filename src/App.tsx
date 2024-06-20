@@ -2,6 +2,7 @@ import { Button, CircularProgress, Container } from "@mui/material";
 import { useEffect, useState } from "react";
 import questionData from "./data/questionList.json";
 import QuestionType from "./lib/types/question";
+import Question from "./components/Question";
 
 export default function App() {
   const [questions, setQuestions] = useState<QuestionType[]>([]);
@@ -27,13 +28,7 @@ export default function App() {
         </p>
         {questions.length > 0 &&
           questions.map((question) => (
-            <>
-              <p>{question.id}</p>
-              <p>{question.type}</p>
-              <p>{question.question}</p>
-              <p>{question.mandatory}</p>
-              <p>{question.hint}</p>
-            </>
+            <Question key={question.id} question={question} />
           ))}
         <Button>Back</Button>
         <Button variant="contained">Next</Button>
