@@ -1,3 +1,52 @@
+body {
+  margin: 0;
+}
+
+#root {
+  background: linear-gradient(
+    #00b9c3 0%,
+    #2d93f4 50%,
+    #2d93f4 50%,
+    #c071ff 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-inline: 2rem;
+  min-height: 100dvh;
+}
+
+.title {
+  font-size: 2.5rem;
+  text-align: center;
+  color: white;
+  font-weight: 900;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+  margin-block: 0rem 0.5rem;
+}
+
+.instructions {
+  text-align: center;
+  margin-block: 0rem 1rem;
+  font-style: italic;
+  color: #4b4b4b;
+}
+
+.container {
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  padding: 2rem;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

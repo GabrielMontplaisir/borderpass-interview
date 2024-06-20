@@ -8,11 +8,10 @@ interface QuestionProps {
 export const Question = ({ question }: QuestionProps) => {
   return (
     <Box>
-      <p>{question.id}</p>
-      <p>{question.type}</p>
-      <p>{question.question}</p>
-      <p>{question.mandatory}</p>
-      <p>{question.hint}</p>
+      <p className="question_label">
+        {question.question}{" "}
+        {question.mandatory && <span className="required">(required)</span>}
+      </p>
     </Box>
   );
 };
