@@ -1,4 +1,10 @@
-import { Button, CircularProgress, Container } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  FormControl,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import questionData from "./data/questionList.json";
 import QuestionType from "./lib/types/question";
@@ -34,6 +40,11 @@ export default function App() {
     console.log("Submitting form data", answers);
   };
 
+  // Set answer for each question
+  const handleAnswerChange = (id: number, answer: string | string[]) => {
+    setAnswers({ ...answers, [id]: answer });
+  };
+
   if (isLoading) {
     return <CircularProgress />;
   }
@@ -46,22 +57,27 @@ export default function App() {
         <p className="instructions">
           Answer the following questions to get started
         </p>
-        {questions.length > 0 && (
-          <Question
-            key={questions[questionIndex].id}
-            question={questions[questionIndex]}
-          />
-        )}
-        {questionIndex !== 0 && <Button onClick={handleBack}>Back</Button>}
-        {questionIndex !== questions.length - 1 ? (
-          <Button variant="contained" onClick={handleNext}>
-            Next
-          </Button>
-        ) : (
-          <Button onClick={handleSubmit} variant="contained">
-            Submit
-          </Button>
-        )}
+        <FormControl fullWidth>
+          {questions.length > 0 && (
+            <Question
+              key={questions[questionIndex].id}
+              question={questions[questionIndex]}
+              onAnswerChange={handleAnswerChange}
+            />
+          )}
+          <Box sx={{ ml: "auto" }}>
+            {questionIndex !== 0 && <Button onClick={handleBack}>Back</Button>}
+            {questionIndex !== questions.length - 1 ? (
+              <Button variant="contained" onClick={handleNext}>
+                Next
+              </Button>
+            ) : (
+              <Button onClick={handleSubmit} variant="contained">
+                Submit
+              </Button>
+            )}
+          </Box>
+        </FormControl>
       </Container>
     </>
   );
