@@ -63,6 +63,7 @@ export default function App() {
               key={questions[questionIndex].id}
               question={questions[questionIndex]}
               onAnswerChange={handleAnswerChange}
+              answer={answers[questions[questionIndex].id]}
             />
           )}
           <Box sx={{ ml: "auto" }}>

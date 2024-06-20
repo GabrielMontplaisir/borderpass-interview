@@ -11,13 +11,33 @@ import {
 } from "@mui/material";
 import QuestionType from "../lib/types/question";
 import { countries } from "../data/countries";
+import { useState } from "react";
 
 interface QuestionProps {
   question: QuestionType;
   onAnswerChange: (id: number, answer: string | string[]) => void;
+  answer: string | string[];
 }
 
-export const Question = ({ question, onAnswerChange }: QuestionProps) => {
+export const Question = ({
+  question,
+  onAnswerChange,
+  answer,
+}: QuestionProps) => {
+  const [checkedList, setCheckedList] = useState<string[]>(
+    (answer as string[]) || []
+  );
+
+  // Handle Checklist changes
+  const handleChecklist = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const updatedList = e.target.checked
+      ? [...checkedList, e.target.name]
+      : checkedList.filter((item) => item !== e.target.name);
+
+    setCheckedList(updatedList);
+    onAnswerChange(question.id, updatedList);
+  };
+
   // Handle text input changes
   const handleChange = (e: any) => {
     onAnswerChange(question.id, e.target.value);
@@ -35,11 +55,16 @@ export const Question = ({ question, onAnswerChange }: QuestionProps) => {
           label={question.hint}
           type={question.type}
           onChange={handleChange}
+          value={answer ? answer : ""}
         />
       )}
       {question.type === "country" && (
         <>
-          <Select displayEmpty onChange={handleChange} fullWidth>
+          <Select
+            displayEmpty
+            onChange={handleChange}
+            value={answer ? answer : ""}
+            fullWidth>
             <MenuItem disabled value="">
               <em>{question.hint}</em>
             </MenuItem>
@@ -57,7 +82,13 @@ export const Question = ({ question, onAnswerChange }: QuestionProps) => {
             question.options.map((option) => (
               <FormControlLabel
                 key={option}
-                control={<Checkbox name={option} />}
+                control={
+                  <Checkbox
+                    name={option}
+                    onChange={handleChecklist}
+                    checked={checkedList.includes(option)}
+                  />
+                }
                 label={option}
               />
             ))}
@@ -71,6 +102,7 @@ export const Question = ({ question, onAnswerChange }: QuestionProps) => {
                 <FormControlLabel
                   key={option}
                   value={option}
+                  checked={answer === option}
                   onChange={handleChange}
                   control={<Radio />}
                   label={option}
